@@ -6,6 +6,7 @@ from pygame import key,mouse,event
 from pygame.locals import *
 from GameObj import *
 from ops import *
+from MapRead import *
 
 gameName = 'Untitled Game'
 dummy = PhysicsCharacter()
@@ -36,10 +37,7 @@ def setup():
     screen.blit(background, (xViewPort, yViewPort))
     pygame.display.flip()
 
-    gameObjects = [PhysicsCharacter(),
-                PhysicsCharacter(),
-                platforms(pygame.Rect((0,400,1000,20))),
-                platforms(pygame.Rect((500,300,500,20)))]
+    gameObjects = ReadMap("Demo")
     player = 0
 
 def userInput():

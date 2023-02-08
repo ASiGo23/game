@@ -1,0 +1,7 @@
+{"Demo": [
+    {"type": "Character"},
+    {"type": "Character"},
+    {"type": "Platform", "rect": [0,400,1000,20]},
+    {"type": "Platform", "rect": [500,300,500,20]}
+  ]
+}
