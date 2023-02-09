@@ -8,7 +8,6 @@ from GameObj import *
 from ops import *
 from MapRead import *
 
-gameName = 'Untitled Game'
 dummy = PhysicsCharacter()
 
 def setup():
@@ -22,10 +21,7 @@ def setup():
 
     xViewPort = 0
     yViewPort = 0
-
-    pygame.init()
-    screen = pygame.display.set_mode((500, 500))
-    pygame.display.set_caption(gameName)
+    from Launcher import screen
 
     # Fill background
     background = pygame.Surface((1000,500)).convert()
@@ -51,9 +47,7 @@ def userInput():
             if not gameObjects[player].body.colliderect(platform.shape): continue
             if event.key == K_UP: gameObjects[player].yVelocity -= 15
             if event.key == K_w:  gameObjects[player].yVelocity -= 15
-    
-    global xViewPort
-    global yViewPort
+
     if key.get_pressed()[pygame.K_LEFT]:
         gameObjects[player].updateCoord(-5,0)
     if key.get_pressed()[pygame.K_a]: 
@@ -94,7 +88,7 @@ def physics():
 def load():
     global xViewPort
     background.fill((255,255,255))
-    canvas.fill((250,250,250))
+    canvas.fill((255,255,255))
     screen.blit(background,(0,0))
     for active in gameObjects:
         active.mainMapUpdate(canvas)
