@@ -1,16 +1,6 @@
 import pygame
 from pygame.locals import *
 from Abstract import *
-
-class PhysicsObj:
-    def __init__(self):
-        self.xVelocity = 0
-        self.yVelocity = 0
-
-class GravObj(PhysicsObj):
-    def __init__(self):
-        super().__init__()
-
 from Weapon import *
 from Bullet import *
 
