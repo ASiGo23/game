@@ -23,6 +23,16 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.pWeapon = missleLauncher(5,5,5,(0,0,0))
     def updateCoord(self,deltaX, deltaY):
         self.body.move_ip((deltaX,deltaY))
+    def moveOnX(self,deltax,bla):
+        from Main import gameObjects
+        self.updateCoord(0,-1)
+        self.updateCoord(deltax,0)
+        for object in gameObjects:
+            if type(object) == platforms:
+                print("here")
+                if self.body.colliderect(object.shape):
+                    self.updateCoord(-deltax,0)
+        self.updateCoord(0,1)
     def spawnbullet(self):
         x,y = pygame.mouse.get_pos()
         print(x,y)

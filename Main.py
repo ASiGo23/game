@@ -8,8 +8,6 @@ from GameObj import *
 from ops import *
 from MapRead import *
 
-dummy = PhysicsCharacter()
-
 def setup():
     global screen
     global background
@@ -49,13 +47,13 @@ def userInput():
             if event.key == K_w:  gameObjects[player].yVelocity -= 15
 
     if key.get_pressed()[pygame.K_LEFT]:
-        gameObjects[player].updateCoord(-5,0)
+        gameObjects[player].moveOnX(-5,0)
     if key.get_pressed()[pygame.K_a]: 
-        gameObjects[player].updateCoord(-5,0)
+        gameObjects[player].moveOnX(-5,0)
     if key.get_pressed()[pygame.K_RIGHT]: 
-        gameObjects[player].updateCoord(5,0)
+        gameObjects[player].moveOnX(5,0)
     if key.get_pressed()[pygame.K_d]:
-        gameObjects[player].updateCoord(5,0)
+        gameObjects[player].moveOnX(5,0)
     if mouse.get_pressed()[0]:
         gameObjects[player].spawnbullet()
 

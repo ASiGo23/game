@@ -20,8 +20,8 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == KEYDOWN:
-            if event.key == K_SPACE:
-                from Main import main
-                main()
+        #ddif event.type == KEYDOWN:
+            #if event.key == K_SPACE:
+        from Main import main
+        main()
     clock.tick(60)
