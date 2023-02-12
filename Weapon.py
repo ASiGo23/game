@@ -7,5 +7,5 @@ class missleLauncher:
         self.missleSpeed = speed
         self.missleSize = size
         self.tracer = tracerColor
-    def spawnBullet(self, angle, damageMultiplier):
-        Bullet()
+    def spawnBullet(self, angle, spaawncoords: tuple[int,int], damageMultiplier = 1):
+        Bullet(0,0,spaawncoords)

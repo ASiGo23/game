@@ -19,14 +19,13 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.updateCoord(deltax,0)
         for object in gameObjects:
             if type(object) == platforms:
-                print("here")
                 if self.body.colliderect(object.shape):
                     self.updateCoord(-deltax,0)
         self.updateCoord(0,1)
     def spawnbullet(self):
         x,y = pygame.mouse.get_pos()
         print(x,y)
-        #self.pWeapon.spawnBullet()
+        self.pWeapon.spawnBullet(0,self.body.center)
     def mainMapUpdate(self,canvas):
         pygame.draw.rect(canvas,(0,0,0),self.body)
     def miniMapUpdate():
@@ -34,6 +33,6 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
 
 class platforms(Drawable, CollisionObj):
     def __init__(self, rect: Rect):
-        self.shape = rect
+        self.shape = pygame.Rect(rect)
     def mainMapUpdate(self,canvas):
         pygame.draw.rect(canvas,(0,0,0),self.shape)
