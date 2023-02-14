@@ -1,3 +1,4 @@
+import math
 import pygame
 from pygame.locals import *
 from Abstract import *
@@ -10,7 +11,7 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.health = 100
         self.faceAngle = 0
         self.body = pygame.Rect((50,50,10,30))
-        self.pWeapon = missleLauncher(5,5,5,(0,0,0))
+        self.pWeapon = bulletLauncher(5,5,5,(0,0,0))
     def updateCoord(self,deltaX, deltaY):
         self.body.move_ip((deltaX,deltaY))
     def moveOnX(self,deltax,bla):
@@ -24,8 +25,7 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.updateCoord(0,1)
     def spawnbullet(self):
         x,y = pygame.mouse.get_pos()
-        print(x,y)
-        self.pWeapon.spawnBullet(0,self.body.center)
+        self.pWeapon.spawnBullet(math.atan((y-250)/(x-250)),self.body.center)
     def mainMapUpdate(self,canvas):
         pygame.draw.rect(canvas,(0,0,0),self.body)
     def miniMapUpdate():

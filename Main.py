@@ -77,32 +77,27 @@ def physics():
             object.updateCoord(0,sign(object.yVelocity))
             for rect in gameObjects:
                 if not isinstance(rect, platforms): continue
-
                 if not object.body.colliderect(rect.shape): continue
-                print(type(object.body))
                 object.yVelocity = 0
                 object.updateCoord(0,-1 * sign(object.yVelocity))
                 break
 
 def bulletPhysics():
     for object in gameObjects:
-        if not isinstance(object,Bullet): continue
         despawn = False
-        if object.xVelocity == 0 and object.yVelocity == 0:
-            for i in range(500):
-                object.x += 1
-                object.y += 1
-                if despawn == False:
-                    for rect in gameObjects:
-                        if not isinstance(rect,platforms):continue
-                        if rect.shape.collidepoint(object.x, object.y):
-                            object.endcoord = (object.x, object.y)
-                            despawn = True
-                        
-            try:
-                object.endcoord
-            except:
-                object.endcoord = (object.x,object.y)
+        if not isinstance(object,Bullet): continue
+        xVelocity = math.cos(object.angle)
+        yVelocity = math.sin(object.angle)
+        for x in range(object.range):
+            object.x += xVelocity
+            object.y += yVelocity
+            for rect in gameObjects:
+                if not isinstance(rect,platforms):continue
+                #if not rect.shape.collidepoint(object.x, object.y):continue
+                #despawn = True
+                object.endcoord = (object.x, object.y)
+                #break
+            if despawn == True: break
 
 def load():
     global xViewPort
@@ -125,7 +120,7 @@ def main():
         physics()
         bulletPhysics()
         load()
-        clock.tick(60)
+        clock.tick(10)
 
 
 if __name__ == '__main__': main()
