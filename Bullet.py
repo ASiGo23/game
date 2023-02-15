@@ -13,9 +13,9 @@ class Bullet(Drawable, PhysicsObj):
         self.angle = angle
         gameObjects.append(self)
     def mainMapUpdate(self,canvas):
+        print(self.startcoord, self.endcoord)
         pygame.draw.line(canvas, (0,0,0),self.startcoord, self.endcoord)
         from Main import gameObjects
-        print(self.startcoord, gameObjects[0].body.center)
         gameObjects.remove(self)
 
 

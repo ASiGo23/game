@@ -39,10 +39,14 @@ def userInput():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == MOUSEBUTTONDOWN:
+            gameObjects[player].isFiring = True
+        elif event.type == MOUSEBUTTONUP:
+            gameObjects[player].isFiring = False
         if not event.type == KEYDOWN: continue
         for platform in gameObjects:
             if not type(platform) == platforms: continue
-            if not gameObjects[player].body.colliderect(platform.shape): continue
+            if not gameObjects[player].hitbox.colliderect(platform.hitbox): continue
             if event.key == K_UP: gameObjects[player].yVelocity -= 15
             if event.key == K_w:  gameObjects[player].yVelocity -= 15
 
@@ -54,8 +58,6 @@ def userInput():
         gameObjects[player].moveOnX(5,0)
     if key.get_pressed()[pygame.K_d]:
         gameObjects[player].moveOnX(5,0)
-    if mouse.get_pressed()[0]:
-        gameObjects[player].spawnbullet()
 
 def physics():
     for object in gameObjects:
@@ -64,12 +66,12 @@ def physics():
         object.updateCoord(0,1)
         for rect in gameObjects:
             if not type(rect) == platforms: continue
-            if object.body.colliderect(rect.shape):
+            if object.hitbox.colliderect(rect.hitbox):
                 object.updateCoord(0,-1)
         onGround = False
         for rect in gameObjects:
             if not type(rect) == platforms: continue
-            if not object.body.colliderect(rect.shape): continue
+            if not object.hitbox.colliderect(rect.hitbox): continue
             onGround = True
         if (not onGround) and isinstance(object,GravObj):
             object.yVelocity = object.yVelocity + 1
@@ -77,10 +79,18 @@ def physics():
             object.updateCoord(0,sign(object.yVelocity))
             for rect in gameObjects:
                 if not isinstance(rect, platforms): continue
-                if not object.body.colliderect(rect.shape): continue
+                if not object.hitbox.colliderect(rect.hitbox): continue
                 object.yVelocity = 0
                 object.updateCoord(0,-1 * sign(object.yVelocity))
                 break
+
+def characterActions():
+    for character in gameObjects:
+        if not isinstance(character, PhysicsCharacter): continue
+        if character.isFiring == True:
+            character.spawnBullet()
+            #character.isFiring = False
+
 
 def bulletPhysics():
     for object in gameObjects:
@@ -93,11 +103,12 @@ def bulletPhysics():
             object.y += yVelocity
             for rect in gameObjects:
                 if not isinstance(rect,platforms):continue
-                #if not rect.shape.collidepoint(object.x, object.y):continue
-                #despawn = True
+                if not rect.hitbox.collidepoint(object.x, object.y):continue
+                despawn = True
                 object.endcoord = (object.x, object.y)
-                #break
+                break
             if despawn == True: break
+        object.endcoord = (object.x, object.y)
 
 def load():
     global xViewPort
@@ -106,8 +117,8 @@ def load():
     screen.blit(background,(0,0))
     for active in gameObjects:
         active.mainMapUpdate(canvas)
-    xViewPort = gameObjects[player].body.left - 250
-    yViewPort = gameObjects[player].body.top - 250
+    xViewPort = gameObjects[player].hitbox.left - 250
+    yViewPort = gameObjects[player].hitbox.top - 250
     screen.blit(canvas,(-xViewPort,-yViewPort))
     pygame.display.update()
 
@@ -118,9 +129,10 @@ def main():
     while True:
         userInput()
         physics()
+        characterActions()
         bulletPhysics()
         load()
-        clock.tick(10)
+        clock.tick(60)
 
 
 if __name__ == '__main__': main()
