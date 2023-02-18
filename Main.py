@@ -34,6 +34,12 @@ def setup():
     gameObjects = ReadMap("Demo")
     player = 0
 
+def tickUpdate():
+    for character in gameObjects:
+        if not isinstance(character, PhysicsCharacter):continue
+        if character.pWeapon.fireDelay != 0:
+            character.pWeapon.fireDelay -=1
+
 def userInput():
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -88,8 +94,9 @@ def characterActions():
     for character in gameObjects:
         if not isinstance(character, PhysicsCharacter): continue
         if character.isFiring == True:
-            character.spawnBullet()
-            #character.isFiring = False
+            character.fire()
+            if character.pWeapon.isAuto == False:
+                character.isFiring = False
 
 
 def bulletPhysics():
@@ -132,6 +139,7 @@ def main():
         characterActions()
         bulletPhysics()
         load()
+        tickUpdate()
         clock.tick(60)
 
 

@@ -12,7 +12,7 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.isFiring = False
         self.faceAngle = 0
         self.hitbox = pygame.Rect((50,50,10,30))
-        self.pWeapon = bulletLauncher(5,5,5,(0,0,0))
+        self.pWeapon = bulletLauncher(True, 5,30,5,5,500,(0,0,0))
     def updateCoord(self,deltaX, deltaY):
         self.hitbox.move_ip((deltaX,deltaY))
     def moveOnX(self,deltax,bla):
@@ -24,9 +24,10 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
                 if self.hitbox.colliderect(object.hitbox):
                     self.updateCoord(-deltax,0)
         self.updateCoord(0,1)
-    def spawnBullet(self):
-        x,y = pygame.mouse.get_pos()
-        self.pWeapon.spawnBullet(math.atan((y-255)/(x-255)),self.hitbox.center)
+
+    def fire(self):
+        self.pWeapon.fire(self)
+
     def mainMapUpdate(self,canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)
     def miniMapUpdate():
