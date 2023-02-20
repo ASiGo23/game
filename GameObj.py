@@ -10,12 +10,26 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         super().__init__()
         self.health = 100
         self.isFiring = False
+        self.isCrouching = False
         self.faceAngle = 0
         self.hitbox = pygame.Rect((50,50,10,30))
         self.pWeapon = bulletLauncher(True, 5,30,5,5,500,(0,0,0))
     def updateCoord(self,deltaX, deltaY):
         self.hitbox.move_ip((deltaX,deltaY))
-    def moveOnX(self,deltax,bla):
+
+    def crouch(self):
+        self.hitbox.height = 15
+        self.isCrouching = True
+    
+    def stand(self):
+        self.hitbox.height = 30
+        self.hitbox.move_ip((0,-15))
+        self.isCrouching = False
+
+    def jump(self):
+        self.yVelocity -= 15
+    
+    def moveOnX(self,deltax):
         from Main import gameObjects
         self.updateCoord(0,-1)
         self.updateCoord(deltax,0)

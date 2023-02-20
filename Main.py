@@ -1,69 +1,18 @@
 #!/usr/bin/python
 
-import sys
 import pygame
 from pygame import key,mouse,event
 from pygame.locals import *
 from GameObj import *
 from ops import *
 from MapRead import *
-
-def setup():
-    global screen
-    global background
-    global canvas
-    global gameObjects
-    global player
-    global xViewPort
-    global yViewPort
-
-    xViewPort = 0
-    yViewPort = 0
-    from Launcher import screen
-
-    # Fill background
-    background = pygame.Surface((1000,500)).convert()
-    background.fill((250, 250, 250))
-
-    canvas = pygame.Surface((1000,500)).convert()
-
-    # Blit everything to the screen
-    screen.blit(background, (xViewPort, yViewPort))
-    pygame.display.flip()
-
-    gameObjects = ReadMap("Demo")
-    player = 0
+from UserInput import *
 
 def tickUpdate():
     for character in gameObjects:
         if not isinstance(character, PhysicsCharacter):continue
         if character.pWeapon.fireDelay != 0:
             character.pWeapon.fireDelay -=1
-
-def userInput():
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == MOUSEBUTTONDOWN:
-            gameObjects[player].isFiring = True
-        elif event.type == MOUSEBUTTONUP:
-            gameObjects[player].isFiring = False
-        if not event.type == KEYDOWN: continue
-        for platform in gameObjects:
-            if not type(platform) == platforms: continue
-            if not gameObjects[player].hitbox.colliderect(platform.hitbox): continue
-            if event.key == K_UP: gameObjects[player].yVelocity -= 15
-            if event.key == K_w:  gameObjects[player].yVelocity -= 15
-
-    if key.get_pressed()[pygame.K_LEFT]:
-        gameObjects[player].moveOnX(-5,0)
-    if key.get_pressed()[pygame.K_a]: 
-        gameObjects[player].moveOnX(-5,0)
-    if key.get_pressed()[pygame.K_RIGHT]: 
-        gameObjects[player].moveOnX(5,0)
-    if key.get_pressed()[pygame.K_d]:
-        gameObjects[player].moveOnX(5,0)
 
 def physics():
     for object in gameObjects:
@@ -98,7 +47,6 @@ def characterActions():
             if character.pWeapon.isAuto == False:
                 character.isFiring = False
 
-
 def bulletPhysics():
     for object in gameObjects:
         despawn = False
@@ -130,11 +78,35 @@ def load():
     pygame.display.update()
 
 def main():
-    setup()
+    global screen
+    global background
+    global canvas
+    global gameObjects
+    global player
+    global xViewPort
+    global yViewPort
+
+    xViewPort = 0
+    yViewPort = 0
+    from Launcher import screen
+
+    # Fill background
+    background = pygame.Surface((1000,500)).convert()
+    background.fill((250, 250, 250))
+
+    canvas = pygame.Surface((1000,500)).convert()
+
+    # Blit everything to the screen
+    screen.blit(background, (xViewPort, yViewPort))
+    pygame.display.flip()
+
+    gameObjects = ReadMap("Demo")
+    player = 0
+
     clock = pygame.time.Clock()
     # Event loop
     while True:
-        userInput()
+        userInput(gameObjects,player)
         physics()
         characterActions()
         bulletPhysics()
