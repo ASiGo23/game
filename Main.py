@@ -5,7 +5,7 @@ from pygame import key,mouse,event
 from pygame.locals import *
 from GameObj import *
 from ops import *
-from MapRead import *
+from ReadData import *
 from UserInput import *
 
 def tickUpdate():
@@ -77,7 +77,7 @@ def load():
     screen.blit(canvas,(-xViewPort,-yViewPort))
     pygame.display.update()
 
-def main():
+def main(environmentObjects:list, players:list, events:list = []):
     global screen
     global background
     global canvas
@@ -86,6 +86,7 @@ def main():
     global xViewPort
     global yViewPort
 
+    gameObjects = players + environmentObjects
     xViewPort = 0
     yViewPort = 0
     from Launcher import screen
@@ -100,7 +101,6 @@ def main():
     screen.blit(background, (xViewPort, yViewPort))
     pygame.display.flip()
 
-    gameObjects = ReadMap("Demo")
     player = 0
 
     clock = pygame.time.Clock()

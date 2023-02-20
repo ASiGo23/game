@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 import pygame.key as key
 
-from GameObj import platforms
+from GameObj import *
 
 def userInput(gameObjects: list, player:int):
     for event in pygame.event.get():

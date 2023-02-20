@@ -1,0 +1,24 @@
+{
+    "squad":[
+        {
+            "name":"Joe",
+            "class":"Commando",
+            "pWeapon":
+            {
+                "type":"Commando",
+                "level": 1,
+                "mods":[]
+            }
+        },
+        {
+            "name":"ASiGo",
+            "class":"Sniper",
+            "pWeapon":
+            {
+                "type":"Sniper",
+                "level": 1,
+                "mods":[]
+            }
+        }
+    ]
+}
