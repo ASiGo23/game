@@ -26,4 +26,4 @@ while True:
             sys.exit()
         from Main import main
         main(ReadMap(Map),ReadSave())
-    clock.tick(60)
+    clock.tick(20)

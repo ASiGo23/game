@@ -14,29 +14,29 @@ def tickUpdate():
         if character.pWeapon.fireDelay != 0:
             character.pWeapon.fireDelay -=1
 
-def physics():
-    for object in gameObjects:
-        if not isinstance(object, GravObj): continue
-
-        object.updateCoord(0,1)
-        for rect in gameObjects:
-            if not type(rect) == platforms: continue
-            if object.hitbox.colliderect(rect.hitbox):
-                object.updateCoord(0,-1)
+def physics(players,environmentObjects):
+    for player in players:
+        player.updateCoord(0,-1)
+        for rect in environmentObjects:
+            if player.hitbox.colliderect(rect.hitbox):
+                player.updateCoord(0,1)
+                player.yVelocity = 0
+        player.updateCoord(0,1)
         onGround = False
-        for rect in gameObjects:
-            if not type(rect) == platforms: continue
-            if not object.hitbox.colliderect(rect.hitbox): continue
-            onGround = True
-        if (not onGround) and isinstance(object,GravObj):
-            object.yVelocity = object.yVelocity + 1
-        for step in range(abs(object.yVelocity)):
-            object.updateCoord(0,sign(object.yVelocity))
+        for platform in environmentObjects:
+            if platform.hitbox.collidepoint(player.hitbox.midbottom):
+                onGround = True
+            if platform.hitbox.collidepoint(player.hitbox.midtop):
+                onGround = True
+        if (not onGround) and isinstance(player,GravObj):
+            player.yVelocity = player.yVelocity + 1
+        for step in range(abs(player.yVelocity)):
+            player.updateCoord(0,sign(player.yVelocity))
             for rect in gameObjects:
                 if not isinstance(rect, platforms): continue
-                if not object.hitbox.colliderect(rect.hitbox): continue
-                object.yVelocity = 0
-                object.updateCoord(0,-1 * sign(object.yVelocity))
+                if not player.hitbox.colliderect(rect.hitbox): continue
+                player.yVelocity = 0
+                player.updateCoord(0,-1 * sign(player.yVelocity))
                 break
 
 def characterActions():
@@ -106,12 +106,13 @@ def main(environmentObjects:list, players:list, events:list = []):
     clock = pygame.time.Clock()
     # Event loop
     while True:
-        userInput(gameObjects,player)
-        physics()
+        userInput(gameObjects,players,environmentObjects,player)
+        physics(players,environmentObjects)
         characterActions()
         bulletPhysics()
         load()
         tickUpdate()
+        print(players[player].yVelocity)
         clock.tick(60)
 
 
