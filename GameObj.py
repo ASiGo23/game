@@ -17,11 +17,11 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def updateCoord(self,deltaX, deltaY):
         self.hitbox.move_ip((deltaX,deltaY))
 
-    def crouch(self):
+    def crouch(self,environmentObjects):
         self.hitbox.height = 15
         self.isCrouching = True
     
-    def stand(self):
+    def stand(self, environmentObjects):
         self.hitbox.height = 30
         self.hitbox.move_ip((0,-15))
         self.isCrouching = False
@@ -35,8 +35,8 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         for object in environmentObjects:
             if object.hitbox.colliderect(self.hitbox):
                 self.updateCoord(0,1)
-                if abs(object.hitbox.top - self.hitbox.top) <= 10:
-                    self.yVelocity -= 7
+                if (abs(object.hitbox.top - self.hitbox.top) <= 10) and not self.isCrouching:
+                    self.yVelocity = -7
                 self.updateCoord(-deltax,0)
                 self.updateCoord(0,-1)
         self.updateCoord(0,1)
