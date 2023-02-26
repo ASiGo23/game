@@ -16,28 +16,25 @@ def tickUpdate():
 
 def physics(players,environmentObjects):
     for player in players:
-        player.updateCoord(0,-1)
-        for rect in environmentObjects:
-            if player.hitbox.colliderect(rect.hitbox):
-                player.updateCoord(0,1)
-                player.yVelocity = 0
-        player.updateCoord(0,1)
-        onGround = False
-        for platform in environmentObjects:
-            if platform.hitbox.collidepoint(player.hitbox.midbottom):
-                onGround = True
-            if platform.hitbox.collidepoint(player.hitbox.midtop):
-                onGround = True
-        if (not onGround) and isinstance(player,GravObj):
-            player.yVelocity = player.yVelocity + 1
+        #move the player according to the velocity incrementally
         for step in range(abs(player.yVelocity)):
             player.updateCoord(0,sign(player.yVelocity))
-            for rect in gameObjects:
-                if not isinstance(rect, platforms): continue
-                if not player.hitbox.colliderect(rect.hitbox): continue
-                player.yVelocity = 0
-                player.updateCoord(0,-1 * sign(player.yVelocity))
-                break
+            for rect in environmentObjects:
+                collidetop    = rect.hitbox.collidepoint(player.hitbox.midtop)
+                collidebottom = rect.hitbox.collidepoint(player.hitbox.midbottom)
+                if collidetop or collidebottom:
+                    player.yVelocity = 0
+                    player.updateCoord(0,-1 * sign(player.yVelocity))
+                    break
+        #check to see if player is on the ground
+        #if not increase yVelocity
+        onGround = False
+        for platform in environmentObjects:
+            collidebottom = platform.hitbox.collidepoint(player.hitbox.midbottom)
+            if collidebottom:
+                onGround = True
+        if not onGround:
+            player.yVelocity += 1
 
 def characterActions():
     for character in gameObjects:
@@ -112,7 +109,6 @@ def main(environmentObjects:list, players:list, events:list = []):
         bulletPhysics()
         load()
         tickUpdate()
-        print(players[player].yVelocity)
         clock.tick(60)
 
 
