@@ -27,7 +27,7 @@ def physics(players,environmentObjects):
                     player.updateCoord(0,-1 * sign(player.yVelocity))
                     break
         #check to see if player is on the ground
-        #if not increase yVelocity
+        #if not increase yVelocity and prevent from crouching
         onGround = False
         for platform in environmentObjects:
             collidebottom = platform.hitbox.collidepoint(player.hitbox.midbottom)
@@ -109,6 +109,7 @@ def main(environmentObjects:list, players:list, events:list = []):
         bulletPhysics()
         load()
         tickUpdate()
+        print(players[player].yVelocity)
         clock.tick(60)
 
 

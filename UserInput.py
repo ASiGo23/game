@@ -32,6 +32,6 @@ def userInput(gameObjects: list, players:list, environmentObjects:list, player:i
     if key.get_pressed()[pygame.K_d]:
         gameObjects[player].moveOnX(environmentObjects, 5)
     if key.get_pressed()[pygame.K_s]:
-        gameObjects[player].crouch()
+        gameObjects[player].crouch(environmentObjects)
     elif gameObjects[player].isCrouching:
-        gameObjects[player].stand()
+        gameObjects[player].stand(environmentObjects)
