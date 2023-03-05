@@ -8,14 +8,17 @@ from ops import *
 from ReadData import *
 from UserInput import *
 
-def tickUpdate():
-    for character in gameObjects:
+def tickUpdate(game_instance):
+    main = game_instance
+    for character in main.get_gameObjects():
         if not isinstance(character, PhysicsCharacter):continue
         if character.pWeapon.fireDelay != 0:
             character.pWeapon.fireDelay -=1
 
-def physics(players,environmentObjects):
-    for player in players:
+def physics(game_instance):
+    main = game_instance
+    environmentObjects = main.get_environmentObjects()
+    for player in main.get_players():
         #move the player according to the velocity incrementally
         for step in range(abs(player.yVelocity)):
             player.updateCoord(0,sign(player.yVelocity))
@@ -36,15 +39,19 @@ def physics(players,environmentObjects):
         if not onGround:
             player.yVelocity += 1
 
-def characterActions():
-    for character in gameObjects:
+def characterActions(game_instance):
+    main = game_instance
+    for character in main.get_players():
         if not isinstance(character, PhysicsCharacter): continue
         if character.isFiring == True:
             character.fire()
             if character.pWeapon.isAuto == False:
                 character.isFiring = False
 
-def bulletPhysics():
+def bulletPhysics(game_instance):
+    main = game_instance
+    gameObjects = main.get_gameObjects()
+
     for object in gameObjects:
         despawn = False
         if not isinstance(object,Bullet): continue
@@ -62,8 +69,14 @@ def bulletPhysics():
             if despawn == True: break
         object.endcoord = (object.x, object.y)
 
-def load():
-    global xViewPort
+def load(game_instance):
+    main = game_instance
+    player = main.get_player()
+    background = main.get_background()
+    canvas = main.get_canvas()
+    screen = main.get_screen()
+    gameObjects = main.get_gameObjects()
+    
     background.fill((255,255,255))
     canvas.fill((255,255,255))
     screen.blit(background,(0,0))
@@ -74,43 +87,47 @@ def load():
     screen.blit(canvas,(-xViewPort,-yViewPort))
     pygame.display.update()
 
-def main(environmentObjects:list, players:list, events:list = []):
-    global screen
-    global background
-    global canvas
-    global gameObjects
-    global player
-    global xViewPort
-    global yViewPort
+class main():
+    def __init__(self, screen:pygame.display, players, environmentObjects):
+        self.players = players
+        self.environmentObjects = environmentObjects
+        self.gameObjects = players + environmentObjects
+        self.xViewPort = 0
+        self.yViewPort = 0
+        self.player = 0
+        self.screen = screen
+        self.canvas = pygame.Surface((1000,500)).convert()
 
-    gameObjects = players + environmentObjects
-    xViewPort = 0
-    yViewPort = 0
-    from Launcher import screen
+        # Fill background
+        self.background = pygame.Surface((1000,500)).convert()
+        self.background.fill((250, 250, 250))
 
-    # Fill background
-    background = pygame.Surface((1000,500)).convert()
-    background.fill((250, 250, 250))
+        # Blit everything to the screen
+        self.screen.blit(self.background, (self.xViewPort, self.yViewPort))
+        pygame.display.flip()
 
-    canvas = pygame.Surface((1000,500)).convert()
-
-    # Blit everything to the screen
-    screen.blit(background, (xViewPort, yViewPort))
-    pygame.display.flip()
-
-    player = 0
-
-    clock = pygame.time.Clock()
-    # Event loop
-    while True:
-        userInput(gameObjects,players,environmentObjects,player)
-        physics(players,environmentObjects)
-        characterActions()
-        bulletPhysics()
-        load()
-        tickUpdate()
-        print(players[player].yVelocity)
-        clock.tick(60)
-
-
-if __name__ == '__main__': main()
+        clock = pygame.time.Clock()
+        # Event loop
+        while True:
+            userInput(self)
+            physics(self)
+            characterActions(self)
+            bulletPhysics(self)
+            load(self)
+            tickUpdate(self)
+            print(players[self.player].yVelocity)
+            clock.tick(60)
+    def get_screen(self):
+        return self.screen
+    def get_canvas(self):
+        return self.canvas
+    def get_background(self):
+        return self.background
+    def get_player(self):
+        return self.player
+    def get_players(self):
+        return self.players
+    def get_environmentObjects(self):
+        return self.environmentObjects
+    def get_gameObjects(self):
+        return self.gameObjects

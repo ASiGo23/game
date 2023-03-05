@@ -5,33 +5,38 @@ import pygame.key as key
 
 from GameObj import *
 
-def userInput(gameObjects: list, players:list, environmentObjects:list, player:int):
+def userInput(game_instance):
+    main = game_instance
+    player = main.get_player()
+    players = main.get_players()
+    environmentObjects = main.get_environmentObjects()
+
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
         if event.type == MOUSEBUTTONDOWN:
             if pygame.mouse.get_pressed()[0]:
-                gameObjects[player].isFiring = True
+                players[player].isFiring = True
         elif event.type == MOUSEBUTTONUP:
-            gameObjects[player].isFiring = False
+            players[player].isFiring = False
         if not event.type == KEYDOWN: continue
         for platform in environmentObjects:
             if not platform.hitbox.collidepoint(players[player].hitbox.centerx,players[player].hitbox.bottom): continue
             if event.key == K_UP: 
-                gameObjects[player].jump()
+                players[player].jump()
             if event.key == K_w:
-                gameObjects[player].jump()
+                players[player].jump()
 
     if key.get_pressed()[pygame.K_LEFT]:
-        gameObjects[player].moveOnX(environmentObjects,-5)
+        players[player].moveOnX(environmentObjects,-5)
     if key.get_pressed()[pygame.K_a]: 
-        gameObjects[player].moveOnX(environmentObjects,-5)
+        players[player].moveOnX(environmentObjects,-5)
     if key.get_pressed()[pygame.K_RIGHT]: 
-        gameObjects[player].moveOnX(environmentObjects, 5)
+        players[player].moveOnX(environmentObjects, 5)
     if key.get_pressed()[pygame.K_d]:
-        gameObjects[player].moveOnX(environmentObjects, 5)
+        players[player].moveOnX(environmentObjects, 5)
     if key.get_pressed()[pygame.K_s]:
-        gameObjects[player].crouch(environmentObjects)
-    elif gameObjects[player].isCrouching:
-        gameObjects[player].stand(environmentObjects)
+        players[player].crouch(environmentObjects)
+    elif players[player].isCrouching:
+        players[player].stand(environmentObjects)

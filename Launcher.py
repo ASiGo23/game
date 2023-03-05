@@ -3,9 +3,6 @@ import pygame
 from pygame.locals import *
 from ReadData import *
 
-global screen
-global gameObjects
-
 gameName = 'Untitled Game'
 
 pygame.init()
@@ -25,5 +22,6 @@ while True:
             pygame.quit()
             sys.exit()
         from Main import main
-        main(ReadMap(Map),ReadSave())
+        game = main(screen,ReadSave(),ReadMap(Map))
     clock.tick(20)
+
