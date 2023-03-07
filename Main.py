@@ -7,6 +7,7 @@ from GameObj import *
 from ops import *
 from ReadData import *
 from UserInput import *
+from botInput import *
 
 def tickUpdate(game_instance):
     main = game_instance
@@ -92,6 +93,7 @@ class main():
         self.players = players
         self.environmentObjects = environmentObjects
         self.gameObjects = players + environmentObjects
+        self.bots = [bot(players[1])]
         self.xViewPort = 0
         self.yViewPort = 0
         self.player = 0
@@ -109,6 +111,7 @@ class main():
         clock = pygame.time.Clock()
         # Event loop
         while True:
+            botInput(self)
             userInput(self)
             physics(self)
             characterActions(self)
@@ -127,6 +130,8 @@ class main():
         return self.player
     def get_players(self):
         return self.players
+    def get_bots(self):
+        return self.bots
     def get_environmentObjects(self):
         return self.environmentObjects
     def get_gameObjects(self):
