@@ -43,32 +43,15 @@ def physics(game_instance):
 def characterActions(game_instance):
     main = game_instance
     for character in main.get_players():
-        if not isinstance(character, PhysicsCharacter): continue
         if character.isFiring == True:
-            character.fire()
+            character.fire(game_instance)
             if character.pWeapon.isAuto == False:
                 character.isFiring = False
 
 def bulletPhysics(game_instance):
-    main = game_instance
-    gameObjects = main.get_gameObjects()
-
-    for object in gameObjects:
-        despawn = False
-        if not isinstance(object,Bullet): continue
-        xVelocity = math.cos(object.angle)
-        yVelocity = math.sin(object.angle)
-        for x in range(object.range):
-            object.x += xVelocity
-            object.y += yVelocity
-            for rect in gameObjects:
-                if not isinstance(rect,platforms):continue
-                if not rect.hitbox.collidepoint(object.x, object.y):continue
-                despawn = True
-                object.endcoord = (object.x, object.y)
-                break
-            if despawn == True: break
-        object.endcoord = (object.x, object.y)
+    for object in game_instance.get_gameObjects():
+        if isinstance(object,Bullet):
+            object.update_pos(game_instance)
 
 def load(game_instance):
     main = game_instance
@@ -82,21 +65,21 @@ def load(game_instance):
     canvas.fill((255,255,255))
     screen.blit(background,(0,0))
     for active in gameObjects:
-        active.mainMapUpdate(canvas)
+        active.mainMapUpdate(game_instance, canvas)
     xViewPort = gameObjects[player].hitbox.left - 250
     yViewPort = gameObjects[player].hitbox.top - 250
     screen.blit(canvas,(-xViewPort,-yViewPort))
     pygame.display.update()
 
 class main():
-    def __init__(self, screen:pygame.display, players, environmentObjects):
+    def __init__(self, screen:pygame.display, players, environmentObjects, player:int):
         self.players = players
         self.environmentObjects = environmentObjects
         self.gameObjects = players + environmentObjects
-        self.bots = [bot(players[1])]
         self.xViewPort = 0
         self.yViewPort = 0
-        self.player = 0
+        self.player = player
+        self.players[player].bot.deactivate()
         self.screen = screen
         self.canvas = pygame.Surface((1000,500)).convert()
 
@@ -130,8 +113,6 @@ class main():
         return self.player
     def get_players(self):
         return self.players
-    def get_bots(self):
-        return self.bots
     def get_environmentObjects(self):
         return self.environmentObjects
     def get_gameObjects(self):

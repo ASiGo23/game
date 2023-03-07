@@ -4,16 +4,23 @@ from pygame.locals import *
 from Abstract import *
 from Weapon import *
 from Bullet import *
+from botInput import *
 
+global playerNum
+playerNum = 0
 class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def __init__(self):
         super().__init__()
+        global playerNum
+        self.playerNum = playerNum
+        playerNum += 1
         self.health = 100
         self.isFiring = False
         self.isCrouching = False
         self.faceAngle = 0
         self.hitbox = pygame.Rect((50,50,10,30))
         self.pWeapon = bulletLauncher(True, 5,30,5,5,500,(0,0,0))
+        self.bot = bot(self)
     def updateCoord(self,deltaX, deltaY):
         self.hitbox.move_ip((deltaX,deltaY))
 
@@ -41,10 +48,13 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
                 self.updateCoord(0,-1)
         self.updateCoord(0,1)
 
-    def fire(self):
-        self.pWeapon.fire(self)
-
-    def mainMapUpdate(self,canvas):
+    def fire(self,game_instance):
+        self.pWeapon.fire(game_instance,self)
+    def deal_damage(self,game_instance,damage):
+        self.health -= damage
+        if self.health <=0:
+            game_instance.get_gameObjects().pop(self.playerNum)
+    def mainMapUpdate(self,game_instance, canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)
     def miniMapUpdate():
         pass
@@ -52,5 +62,7 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
 class platforms(Drawable, CollisionObj):
     def __init__(self, rect: Rect):
         self.hitbox = pygame.Rect(rect)
-    def mainMapUpdate(self,canvas):
+    def deal_damage(self,damage):
+        pass
+    def mainMapUpdate(self,game_instance, canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)

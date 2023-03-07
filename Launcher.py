@@ -22,6 +22,6 @@ while True:
             pygame.quit()
             sys.exit()
         from Main import main
-        game = main(screen,ReadSave(),ReadMap(Map))
+        game = main(screen,ReadSave(),ReadMap(Map),0)
     clock.tick(20)
 
