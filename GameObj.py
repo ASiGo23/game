@@ -53,7 +53,8 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def deal_damage(self,game_instance,damage):
         self.health -= damage
         if self.health <=0:
-            game_instance.get_gameObjects().pop(self.playerNum)
+            game_instance.get_gameObjects().remove(self)
+            game_instance.get_players().remove(self)
     def mainMapUpdate(self,game_instance, canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)
     def miniMapUpdate():

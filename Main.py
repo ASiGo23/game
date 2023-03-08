@@ -101,7 +101,6 @@ class main():
             bulletPhysics(self)
             load(self)
             tickUpdate(self)
-            print(players[self.player].yVelocity)
             clock.tick(60)
     def get_screen(self):
         return self.screen

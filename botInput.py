@@ -8,6 +8,6 @@ class bot:
         self.avatar = avatar
         self.active = True
     def calculate_move(self,game_instance):
-        self.avatar.moveOnX(game_instance.get_environmentObjects(),5)
+        self.avatar.moveOnX(game_instance.get_environmentObjects(),2)
     def deactivate(self):
         self.active = False

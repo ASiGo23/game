@@ -27,14 +27,14 @@ class Bullet(Drawable, PhysicsObj):
                 if rect.hitbox.collidepoint(self.x, self.y):
                     despawn = True
                     self.endcoord = (self.x, self.y)
-                    rect.deal_damage(100)
+                    rect.deal_damage(50)
                     break
             for player in game_instance.get_players():
                 if not player == self.owner:
                     if player.hitbox.collidepoint(self.x,self.y):
                         despawn = True
                         self.endcoord = (self.x, self.y)
-                        player.deal_damage(game_instance, 100)
+                        player.deal_damage(game_instance, 50)
                         break
             if despawn == True: break
         self.endcoord = (self.x, self.y)
