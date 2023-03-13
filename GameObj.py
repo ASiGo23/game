@@ -18,11 +18,11 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.isFiring = False
         self.isCrouching = False
         self.faceAngle = 0
-        self.hitbox = pygame.Rect((50,50,10,30))
-        self.pWeapon = bulletLauncher(True, 5,30,5,5,500,(0,0,0))
+        self.hitbox = pygame.Rect((50, 50, 10, 30))
+        self.pWeapon = bulletLauncher(True, 5, 30, 5, 5, 500, (0, 0, 0))
         self.bot = bot(self)
-    def updateCoord(self,deltaX, deltaY):
-        self.hitbox.move_ip((deltaX,deltaY))
+    def updateCoord(self, deltaX, deltaY):
+        self.hitbox.move_ip((deltaX, deltaY))
 
     def crouch(self,environmentObjects):
         self.hitbox.height = 15
@@ -53,12 +53,28 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def deal_damage(self,game_instance,damage):
         self.health -= damage
         if self.health <=0:
+            game_instance.get_gameObjects().append(dead_character(self))
             game_instance.get_gameObjects().remove(self)
-            game_instance.get_players().remove(self)
+    def tick_action(self,game_instance):
+        if self.pWeapon.fireDelay != 0:
+            self.pWeapon.fireDelay -=1
     def mainMapUpdate(self,game_instance, canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)
     def miniMapUpdate():
         pass
+
+class dead_character():
+    def __init__(self, character:PhysicsCharacter) -> None:
+        self.respawnDelay = 0*60
+        self.ghost = character
+    
+    def tick_action(self, game_instance):
+        self.respawnDelay += -1
+        if self.respawnDelay <=0:
+            self.ghost.hitbox.topleft = (50,50)
+            game_instance.get_gameObjects().append(self.ghost)
+            game_instance.get_gameObjects().remove(self)
+
 
 class platforms(Drawable, CollisionObj):
     def __init__(self, rect: Rect):

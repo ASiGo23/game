@@ -10,16 +10,14 @@ from UserInput import *
 from botInput import *
 
 def tickUpdate(game_instance):
-    main = game_instance
-    for character in main.get_gameObjects():
-        if not isinstance(character, PhysicsCharacter):continue
-        if character.pWeapon.fireDelay != 0:
-            character.pWeapon.fireDelay -=1
+    for object in game_instance.get_gameObjects():
+        try: object.tick_action(game_instance)
+        except: pass
 
 def physics(game_instance):
     main = game_instance
-    environmentObjects = main.get_environmentObjects()
-    for player in main.get_players():
+    environmentObjects = main.get_type(platforms)
+    for player in main.get_type(PhysicsCharacter):
         #move the player according to the velocity incrementally
         for step in range(abs(player.yVelocity)):
             player.updateCoord(0,sign(player.yVelocity))
@@ -42,16 +40,15 @@ def physics(game_instance):
 
 def characterActions(game_instance):
     main = game_instance
-    for character in main.get_players():
+    for character in main.get_type(PhysicsCharacter):
         if character.isFiring == True:
             character.fire(game_instance)
             if character.pWeapon.isAuto == False:
                 character.isFiring = False
 
 def bulletPhysics(game_instance):
-    for object in game_instance.get_gameObjects():
-        if isinstance(object,Bullet):
-            object.update_pos(game_instance)
+    for object in game_instance.get_type(Bullet):
+        object.update_pos(game_instance)
 
 def load(game_instance):
     main = game_instance
@@ -60,11 +57,12 @@ def load(game_instance):
     canvas = main.get_canvas()
     screen = main.get_screen()
     gameObjects = main.get_gameObjects()
+    drawable_objects = main.get_type(Drawable)
     
     background.fill((255,255,255))
     canvas.fill((255,255,255))
     screen.blit(background,(0,0))
-    for active in gameObjects:
+    for active in drawable_objects:
         active.mainMapUpdate(game_instance, canvas)
     xViewPort = gameObjects[player].hitbox.left - 250
     yViewPort = gameObjects[player].hitbox.top - 250
@@ -73,13 +71,11 @@ def load(game_instance):
 
 class main():
     def __init__(self, screen:pygame.display, players, environmentObjects, player:int):
-        self.players = players
-        self.environmentObjects = environmentObjects
         self.gameObjects = players + environmentObjects
         self.xViewPort = 0
         self.yViewPort = 0
         self.player = player
-        self.players[player].bot.deactivate()
+        players[player].bot.deactivate()
         self.screen = screen
         self.canvas = pygame.Surface((1000,500)).convert()
 
@@ -110,9 +106,11 @@ class main():
         return self.background
     def get_player(self):
         return self.player
-    def get_players(self):
-        return self.players
-    def get_environmentObjects(self):
-        return self.environmentObjects
+    def get_type(self,input_class:type):
+        buffer = []
+        for object in self.gameObjects:
+            if isinstance(object,input_class):
+                buffer.append(object)
+        return buffer
     def get_gameObjects(self):
         return self.gameObjects

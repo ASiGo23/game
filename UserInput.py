@@ -6,10 +6,11 @@ import pygame.key as key
 from GameObj import *
 
 def userInput(game_instance):
+    from GameObj import PhysicsCharacter,platforms
     main = game_instance
     player = main.get_player()
-    players = main.get_players()
-    environmentObjects = main.get_environmentObjects()
+    players = main.get_type(PhysicsCharacter)
+    environmentObjects = main.get_type(platforms)
 
     for event in pygame.event.get():
         if event.type == QUIT:

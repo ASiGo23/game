@@ -17,19 +17,20 @@ class Bullet(Drawable, PhysicsObj):
         pygame.draw.line(canvas, (0,0,0),self.startcoord, self.endcoord)
         game_instance.get_gameObjects().remove(self)
     def update_pos(self,game_instance):
+        from GameObj import platforms,PhysicsCharacter
         despawn = False
         xVelocity = math.cos(self.angle)
         yVelocity = math.sin(self.angle)
         for x in range(self.range):
             self.x += xVelocity
             self.y += yVelocity
-            for rect in game_instance.get_environmentObjects():
+            for rect in game_instance.get_type(platforms):
                 if rect.hitbox.collidepoint(self.x, self.y):
                     despawn = True
                     self.endcoord = (self.x, self.y)
                     rect.deal_damage(50)
                     break
-            for player in game_instance.get_players():
+            for player in game_instance.get_type(PhysicsCharacter):
                 if not player == self.owner:
                     if player.hitbox.collidepoint(self.x,self.y):
                         despawn = True
