@@ -4,6 +4,7 @@ from Bullet import *
 
 class bulletLauncher:
     def __init__(self, 
+    owner,
     isAuto:bool, 
     fireRate:int,
     damage:int, 
@@ -11,6 +12,7 @@ class bulletLauncher:
     size:int, 
     range:int, 
     tracerColor: tuple[int,int,int]):
+        self.owner = owner
         self.isAuto = isAuto
         self.fireRate = fireRate
         self.fireDelay = 0
@@ -20,10 +22,9 @@ class bulletLauncher:
         self.tracer = tracerColor
         self.range = range
     
-    def fire(self, game_instance, owner):
+    def fire(self, game_instance):
         if self.fireDelay == 0:
-            x,y = pygame.mouse.get_pos()
-            self.spawnBullet(game_instance, owner, math.atan2((y-250),(x-250)), owner.hitbox.center)
+            self.spawnBullet(game_instance, self.owner, self.owner.aim, self.owner.hitbox.center)
             self.fireDelay = self.fireRate
 
     def spawnBullet(self, game_instance, owner,angle, spaawncoords: tuple[int,int], damageMultiplier = 1):

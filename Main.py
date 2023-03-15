@@ -64,18 +64,18 @@ def load(game_instance):
     screen.blit(background,(0,0))
     for active in drawable_objects:
         active.mainMapUpdate(game_instance, canvas)
-    xViewPort = gameObjects[player].hitbox.left - 250
-    yViewPort = gameObjects[player].hitbox.top - 250
+    xViewPort = player.hitbox.left - 250
+    yViewPort = player.hitbox.top - 250
     screen.blit(canvas,(-xViewPort,-yViewPort))
     pygame.display.update()
 
 class main():
-    def __init__(self, screen:pygame.display, players, environmentObjects, player:int):
+    def __init__(self, screen:pygame.Surface, players, environmentObjects, player:int):
         self.gameObjects = players + environmentObjects
         self.xViewPort = 0
         self.yViewPort = 0
-        self.player = player
-        players[player].bot.deactivate()
+        self.player = players[player]
+        self.player.bot.deactivate()
         self.screen = screen
         self.canvas = pygame.Surface((1000,500)).convert()
 
@@ -106,6 +106,11 @@ class main():
         return self.background
     def get_player(self):
         return self.player
+    def update_player(self, new_player:PhysicsCharacter):
+        self.player.bot.active = True
+        self.player = new_player
+        self.player.bot.active = False
+
     def get_type(self,input_class:type):
         buffer = []
         for object in self.gameObjects:

@@ -17,9 +17,10 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.health = 100
         self.isFiring = False
         self.isCrouching = False
+        self.aim = 0
         self.faceAngle = 0
         self.hitbox = pygame.Rect((50, 50, 10, 30))
-        self.pWeapon = bulletLauncher(True, 5, 30, 5, 5, 500, (0, 0, 0))
+        self.pWeapon = bulletLauncher(self,True, 5, 30, 5, 5, 500, (0, 0, 0))
         self.bot = bot(self)
     def updateCoord(self, deltaX, deltaY):
         self.hitbox.move_ip((deltaX, deltaY))
@@ -49,11 +50,11 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.updateCoord(0,1)
 
     def fire(self,game_instance):
-        self.pWeapon.fire(game_instance,self)
+        self.pWeapon.fire(game_instance)
     def deal_damage(self,game_instance,damage):
         self.health -= damage
         if self.health <=0:
-            game_instance.get_gameObjects().append(dead_character(self))
+            game_instance.get_gameObjects().append(dead_character(self,game_instance))
             game_instance.get_gameObjects().remove(self)
     def tick_action(self,game_instance):
         if self.pWeapon.fireDelay != 0:
@@ -64,8 +65,8 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         pass
 
 class dead_character():
-    def __init__(self, character:PhysicsCharacter) -> None:
-        self.respawnDelay = 0*60
+    def __init__(self, character:PhysicsCharacter,game_instance) -> None:
+        self.respawnDelay = 1*60
         self.ghost = character
     
     def tick_action(self, game_instance):
