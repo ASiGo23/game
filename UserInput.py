@@ -20,13 +20,20 @@ def userInput(game_instance):
                 player.isFiring = True
         elif event.type == MOUSEBUTTONUP:
             player.isFiring = False
-        if not event.type == KEYDOWN: continue
-        for platform in environmentObjects:
-            if not platform.hitbox.collidepoint(player.hitbox.centerx, player.hitbox.bottom): continue
-            if event.key == K_UP: 
-                player.jump()
-            if event.key == K_w:
-                player.jump()
+        if event.type == KEYDOWN: 
+            for platform in environmentObjects:
+                if not platform.hitbox.collidepoint(player.hitbox.centerx, player.hitbox.bottom): continue
+                if event.key == K_UP: 
+                    player.jump()
+                    continue
+                if event.key == K_w:
+                    player.jump()
+                    continue
+            if event.key == K_g:
+                if main.botActive:
+                    main.botActive = False
+                else:
+                    main.botActive = True
 
     if key.get_pressed()[pygame.K_LEFT]:
         player.moveOnX(environmentObjects,-5)

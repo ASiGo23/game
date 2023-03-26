@@ -9,19 +9,22 @@ from botInput import *
 global playerNum
 playerNum = 0
 class PhysicsCharacter(GravObj, Drawable, CollisionObj):
-    def __init__(self):
+    def __init__(self, pWeapon, maxHealth = 100, team = 0):
         super().__init__()
         global playerNum
         self.playerNum = playerNum
         playerNum += 1
-        self.health = 100
+        self.health = maxHealth
+        self.team = team
         self.isFiring = False
         self.isCrouching = False
         self.aim = 0
         self.faceAngle = 0
         self.hitbox = pygame.Rect((50, 50, 10, 30))
-        self.pWeapon = bulletLauncher(self,True, 5, 30, 5, 5, 500, (0, 0, 0))
+        self.pWeapon = pWeapon
+        self.pWeapon.owner = self
         self.bot = bot(self)
+
     def updateCoord(self, deltaX, deltaY):
         self.hitbox.move_ip((deltaX, deltaY))
 

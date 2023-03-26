@@ -1,10 +1,30 @@
 {
     "squad":[
         {
-            
+            "name" : "unknown",
+
+            "weapon":{
+                "isAuto"  : true,
+                "fireRate" : 2,
+                "damage" : 5,
+                "speed" : 0,
+                "size" : 0,
+                "range" : 500,
+                "tracerColor" : [0,0,255]
+            }    
         },
         {
+            "name" : "unknown",
 
+            "weapon":{
+                "isAuto"  : true,
+                "fireRate" : 20,
+                "damage" : 5,
+                "speed" : 0,
+                "size" : 0,
+                "range" : 500,
+                "tracerColor" : [0,0,255]
+            }
         }
     ]
 }

@@ -1,8 +1,38 @@
-{"Demo": [
-    {"rect": [0,400,1000,20]},
-    {"rect": [0,380,50,20]},
-    {"rect": [100,275,500,20]},
-    {"rect": [980,0,20,500]},
-    {"rect": [0,0,20,500]}
-  ]
+{
+	"Demo": {
+		"enemy_players":[
+			{
+				"name" : "unknown",
+				"weapon":{
+					"isAuto"  : true,
+					"fireRate" : 30,
+					"damage" : 5,
+					"speed" : 0,
+					"size" : 0,
+					"range" : 200,
+					"tracerColor" : [0,0,255]
+				}    
+			},
+			{
+				"name" : "unknown",
+				"weapon":{
+					"isAuto"  : true,
+					"fireRate" : 30,
+					"damage" : 5,
+					"speed" : 0,
+					"size" : 0,
+					"range" : 200,
+					"tracerColor" : [0,0,255]
+				}
+			}
+		],
+		"environment_objects":[
+			{"rect": [0,400,1000,20]},
+			{"rect": [0,380,50,20]},
+			{"rect": [100,275,500,20]},
+			{"rect": [980,0,20,500]},
+			{"rect": [0,0,20,500]}
+		]
+		
+	}
 }

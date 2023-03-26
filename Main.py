@@ -72,6 +72,7 @@ def load(game_instance):
 class main():
     def __init__(self, screen:pygame.Surface, players, environmentObjects, player:int):
         self.gameObjects = players + environmentObjects
+        self.botActive = False
         self.xViewPort = 0
         self.yViewPort = 0
         self.player = players[player]

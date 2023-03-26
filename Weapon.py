@@ -2,9 +2,8 @@ import math
 import pygame
 from Bullet import *
 
-class bulletLauncher:
-    def __init__(self, 
-    owner,
+class Weapon:
+    def __init__(self,
     isAuto:bool, 
     fireRate:int,
     damage:int, 
@@ -12,7 +11,8 @@ class bulletLauncher:
     size:int, 
     range:int, 
     tracerColor: tuple[int,int,int]):
-        self.owner = owner
+    
+        self.owner = None
         self.isAuto = isAuto
         self.fireRate = fireRate
         self.fireDelay = 0
@@ -27,5 +27,5 @@ class bulletLauncher:
             self.spawnBullet(game_instance, self.owner, self.owner.aim, self.owner.hitbox.center)
             self.fireDelay = self.fireRate
 
-    def spawnBullet(self, game_instance, owner,angle, spaawncoords: tuple[int,int], damageMultiplier = 1):
-        Bullet(game_instance, owner, angle,self.range, spaawncoords)
+    def spawnBullet(self, game_instance, owner, angle, spaawncoords: tuple[int,int], damageMultiplier = 1):
+        Bullet(game_instance, owner, angle, self.range, spaawncoords)

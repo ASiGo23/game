@@ -31,11 +31,14 @@ class Bullet(Drawable, PhysicsObj):
                     rect.deal_damage(50)
                     break
             for player in game_instance.get_type(PhysicsCharacter):
-                if not player == self.owner:
+                if ((not player == self.owner) and (not player.team == self.owner.team)
+                    ):
                     if player.hitbox.collidepoint(self.x,self.y):
                         despawn = True
                         self.endcoord = (self.x, self.y)
                         player.deal_damage(game_instance, 50)
+                        print("player:",player.team)
+                        print("owner",self.owner.team)
                         break
             if despawn == True: break
         self.endcoord = (self.x, self.y)
