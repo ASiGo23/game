@@ -8,9 +8,11 @@ from botInput import *
 
 global playerNum
 playerNum = 0
+
 class PhysicsCharacter(GravObj, Drawable, CollisionObj):
-    def __init__(self, pWeapon, maxHealth = 100, team = 0):
+    def __init__(self, pWeapon, maxHealth = 100, team = 0) -> None:
         super().__init__()
+        self.game_instance = None
         global playerNum
         self.playerNum = playerNum
         playerNum += 1
@@ -25,59 +27,66 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         self.pWeapon.owner = self
         self.bot = bot(self)
 
-    def updateCoord(self, deltaX, deltaY):
+    def updateCoord(self, deltaX, deltaY) -> None:
         self.hitbox.move_ip((deltaX, deltaY))
 
-    def crouch(self,environmentObjects):
+    def crouch(self) -> None:
         self.hitbox.height = 15
         self.isCrouching = True
     
-    def stand(self, environmentObjects):
+    def stand(self) -> None:
         self.hitbox.height = 30
         self.hitbox.move_ip((0,-15))
         self.isCrouching = False
 
-    def jump(self):
+    def jump(self) -> None:
         self.yVelocity -= 15
     
-    def moveOnX(self,environmentObjects,deltax):
+    def moveOnX(self,deltax) -> None:
+        environmentObjects = self.game_instance.get_type(platforms)
         self.updateCoord(0,-1)
         self.updateCoord(deltax,0)
         for object in environmentObjects:
             if object.hitbox.colliderect(self.hitbox):
                 self.updateCoord(0,1)
-                if (abs(object.hitbox.top - self.hitbox.top) <= 10) and not self.isCrouching:
+                distance = abs(object.hitbox.top - self.hitbox.top)
+                if (distance <= 10) and not self.isCrouching:
                     self.yVelocity = -7
                 self.updateCoord(-deltax,0)
                 self.updateCoord(0,-1)
         self.updateCoord(0,1)
 
-    def fire(self,game_instance):
-        self.pWeapon.fire(game_instance)
-    def deal_damage(self,game_instance,damage):
+    def fire(self) -> None:
+        self.pWeapon.fire()
+
+    def deal_damage(self,damage) -> None:
         self.health -= damage
         if self.health <=0:
-            game_instance.get_gameObjects().append(dead_character(self,game_instance))
-            game_instance.get_gameObjects().remove(self)
-    def tick_action(self,game_instance):
+            self.game_instance.get_gameObjects().append(dead_character(self, self.game_instance))
+            self.game_instance.get_gameObjects().remove(self)
+
+    def tick_action(self) -> None:
         if self.pWeapon.fireDelay != 0:
             self.pWeapon.fireDelay -=1
-    def mainMapUpdate(self,game_instance, canvas):
+
+    def mainMapUpdate(self, canvas) -> None:
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)
-    def miniMapUpdate():
+
+    def miniMapUpdate() -> None:
         pass
 
 class dead_character():
-    def __init__(self, character:PhysicsCharacter,game_instance) -> None:
+    def __init__(self, character:PhysicsCharacter, game_instance) -> None:
+        self.game_instance = game_instance
         self.respawnDelay = 1*60
         self.ghost = character
     
-    def tick_action(self, game_instance):
+    def tick_action(self) -> None:
         self.respawnDelay += -1
         if self.respawnDelay <=0:
             self.ghost.hitbox.topleft = (50,50)
-            game_instance.get_gameObjects().append(self.ghost)
-            game_instance.get_gameObjects().remove(self)
+            self.game_instance.get_gameObjects().append(self.ghost)
+            self.game_instance.get_gameObjects().remove(self)
 
 
 class platforms(Drawable, CollisionObj):
@@ -85,5 +94,5 @@ class platforms(Drawable, CollisionObj):
         self.hitbox = pygame.Rect(rect)
     def deal_damage(self,damage):
         pass
-    def mainMapUpdate(self,game_instance, canvas):
+    def mainMapUpdate(self, canvas):
         pygame.draw.rect(canvas,(0,0,0),self.hitbox)

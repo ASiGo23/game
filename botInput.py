@@ -7,16 +7,17 @@ def botInput(game_instance):
     from GameObj import PhysicsCharacter
     for bot in game_instance.get_type(PhysicsCharacter):
         if bot.bot.active == True:
-            bot.bot.calculate_moves(game_instance)
+            bot.bot.calculate_moves()
 
 class bot:
     def __init__(self,avatar):
+        self.game_instance = None
         self.avatar = avatar
         self.active = True
-    def calculate_moves(self,game_instance):
+    def calculate_moves(self):
         from GameObj import PhysicsCharacter,platforms
-        self.avatar.moveOnX(game_instance.get_type(platforms),2)
-        playerlist = game_instance.get_type(PhysicsCharacter)
+        self.avatar.moveOnX(2)
+        playerlist = self.game_instance.get_type(PhysicsCharacter)
         for player in playerlist:
             if player.team == self.avatar.team:
                 playerlist.remove(player)
@@ -27,7 +28,7 @@ class bot:
                 randomEnemy.hitbox.centerx - self.avatar.hitbox.centerx
             )
         except: pass
-        if game_instance.botActive == True:
+        if self.game_instance.botActive == True:
             self.avatar.isFiring = True
         else:
             self.avatar.isFiring = False

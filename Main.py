@@ -11,7 +11,7 @@ from botInput import *
 
 def tickUpdate(game_instance):
     for object in game_instance.get_gameObjects():
-        try: object.tick_action(game_instance)
+        try: object.tick_action()
         except: pass
 
 def physics(game_instance):
@@ -42,13 +42,13 @@ def characterActions(game_instance):
     main = game_instance
     for character in main.get_type(PhysicsCharacter):
         if character.isFiring == True:
-            character.fire(game_instance)
+            character.fire()
             if character.pWeapon.isAuto == False:
                 character.isFiring = False
 
 def bulletPhysics(game_instance):
     for object in game_instance.get_type(Bullet):
-        object.update_pos(game_instance)
+        object.update_pos()
 
 def load(game_instance):
     main = game_instance
@@ -63,7 +63,7 @@ def load(game_instance):
     canvas.fill((255,255,255))
     screen.blit(background,(0,0))
     for active in drawable_objects:
-        active.mainMapUpdate(game_instance, canvas)
+        active.mainMapUpdate(canvas)
     xViewPort = player.hitbox.left - 250
     yViewPort = player.hitbox.top - 250
     screen.blit(canvas,(-xViewPort,-yViewPort))
@@ -72,6 +72,13 @@ def load(game_instance):
 class main():
     def __init__(self, screen:pygame.Surface, players, environmentObjects, player:int):
         self.gameObjects = players + environmentObjects
+
+        #Lets the players know who is the boss
+        for i in self.gameObjects:
+            if isinstance(i, PhysicsCharacter):
+                i.game_instance = self
+                i.bot.game_instance = self
+
         self.botActive = False
         self.xViewPort = 0
         self.yViewPort = 0
@@ -99,6 +106,7 @@ class main():
             load(self)
             tickUpdate(self)
             clock.tick(60)
+
     def get_screen(self):
         return self.screen
     def get_canvas(self):

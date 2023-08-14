@@ -12,6 +12,7 @@ class Weapon:
     range:int, 
     tracerColor: tuple[int,int,int]):
     
+        #self.owner is set by the owner after creation
         self.owner = None
         self.isAuto = isAuto
         self.fireRate = fireRate
@@ -22,10 +23,10 @@ class Weapon:
         self.tracer = tracerColor
         self.range = range
     
-    def fire(self, game_instance):
+    def fire(self):
         if self.fireDelay == 0:
-            self.spawnBullet(game_instance, self.owner, self.owner.aim, self.owner.hitbox.center)
+            self.spawnBullet(self.owner, self.owner.aim, self.owner.hitbox.center)
             self.fireDelay = self.fireRate
 
-    def spawnBullet(self, game_instance, owner, angle, spaawncoords: tuple[int,int], damageMultiplier = 1):
-        Bullet(game_instance, owner, angle, self.range, spaawncoords)
+    def spawnBullet(self, owner, angle, spaawncoords: tuple[int,int], damageMultiplier = 1):
+        Bullet(owner.game_instance, owner, angle, self.range, spaawncoords)
