@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from functools import singledispatchmethod
 import pygame
 from pygame import key,mouse,event
 from pygame.locals import *
@@ -10,7 +11,7 @@ from UserInput import *
 from botInput import *
 
 def tickUpdate(game_instance):
-    for object in game_instance.get_gameObjects():
+    for object in game_instance.get_game_objects():
         try: object.tick_action()
         except: pass
 
@@ -56,7 +57,7 @@ def load(game_instance):
     background = main.get_background()
     canvas = main.get_canvas()
     screen = main.get_screen()
-    gameObjects = main.get_gameObjects()
+    game_objects = main.get_game_objects()
     drawable_objects = main.get_type(Drawable)
     
     background.fill((255,255,255))
@@ -70,22 +71,17 @@ def load(game_instance):
     pygame.display.update()
 
 class main():
-    def __init__(self, screen:pygame.Surface, players, environmentObjects, player:int):
-        self.gameObjects = players + environmentObjects
+    def __init__(self, screen:pygame.Surface):
 
-        #Lets the players know who is the boss
-        for i in self.gameObjects:
-            if isinstance(i, PhysicsCharacter):
-                i.game_instance = self
-                i.bot.game_instance = self
-
+        self.player = None
         self.botActive = False
         self.xViewPort = 0
         self.yViewPort = 0
-        self.player = players[player]
-        self.player.bot.deactivate()
         self.screen = screen
         self.canvas = pygame.Surface((1000,500)).convert()
+
+        self.character_list = []
+        self.game_objects= []
 
         # Fill background
         self.background = pygame.Surface((1000,500)).convert()
@@ -95,8 +91,24 @@ class main():
         self.screen.blit(self.background, (self.xViewPort, self.yViewPort))
         pygame.display.flip()
 
+    @singledispatchmethod
+    def add_subject(self, subject:PhysicsCharacter):
+        self.character_list.append(subject)
+        self.game_objects.append(subject)
+        subject.game_instance = self
+        subject.bot.game_instance = self
+        
+
+    @add_subject.register
+    def _(self, subject:platforms):
+        self.game_objects.append(subject)
+
+    def player_set(self, num:int):
+        self.player = self.character_list[num]
+        self.player.bot.deactivate()
+
+    def run(self):
         clock = pygame.time.Clock()
-        # Event loop
         while True:
             botInput(self)
             userInput(self)
@@ -122,9 +134,9 @@ class main():
 
     def get_type(self,input_class:type):
         buffer = []
-        for object in self.gameObjects:
+        for object in self.game_objects:
             if isinstance(object,input_class):
                 buffer.append(object)
         return buffer
-    def get_gameObjects(self):
-        return self.gameObjects
+    def get_game_objects(self):
+        return self.game_objects

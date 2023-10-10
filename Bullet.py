@@ -13,11 +13,11 @@ class Bullet(Drawable, PhysicsObj):
         self.x = spaawncoords[0]
         self.y = spaawncoords[1]
         self.angle = angle
-        game_instance.get_gameObjects().append(self)
+        game_instance.get_game_objects().append(self)
  
     def mainMapUpdate(self, canvas):
         pygame.draw.line(canvas, (0,0,0),self.startcoord, self.endcoord)
-        self.game_instance.get_gameObjects().remove(self)
+        self.game_instance.get_game_objects().remove(self)
 
     def update_pos(self):
         from GameObj import platforms,PhysicsCharacter

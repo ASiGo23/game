@@ -22,6 +22,15 @@ while True:
             pygame.quit()
             sys.exit()
         from Main import main
-        game = main(screen,ReadSave(),ReadMap(Map),0)
+        game = main(screen)
+
+        for object in ReadMap("Demo"):
+            game.add_subject(object)
+        for object in ReadSave():
+            game.add_subject(object)
+
+        game.player_set(0)
+
+        game.run()
     clock.tick(20)
 

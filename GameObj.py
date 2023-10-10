@@ -13,9 +13,11 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def __init__(self, pWeapon, maxHealth = 100, team = 0) -> None:
         super().__init__()
         self.game_instance = None
+
         global playerNum
         self.playerNum = playerNum
         playerNum += 1
+
         self.health = maxHealth
         self.team = team
         self.isFiring = False
@@ -62,8 +64,9 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
     def deal_damage(self,damage) -> None:
         self.health -= damage
         if self.health <=0:
-            self.game_instance.get_gameObjects().append(dead_character(self, self.game_instance))
-            self.game_instance.get_gameObjects().remove(self)
+            game_objects = self.game_instance.get_game_objects()
+            game_objects.append(dead_character(self, self.game_instance))
+            game_objects.remove(self)
 
     def tick_action(self) -> None:
         if self.pWeapon.fireDelay != 0:
@@ -85,8 +88,8 @@ class dead_character():
         self.respawnDelay += -1
         if self.respawnDelay <=0:
             self.ghost.hitbox.topleft = (50,50)
-            self.game_instance.get_gameObjects().append(self.ghost)
-            self.game_instance.get_gameObjects().remove(self)
+            self.game_instance.get_game_objects().append(self.ghost)
+            self.game_instance.get_game_objects().remove(self)
 
 
 class platforms(Drawable, CollisionObj):

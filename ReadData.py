@@ -3,10 +3,10 @@ from GameObj import *
 from Weapon import *
 
 def ReadMap(Map):
-    gameObjects = []
+    game_objects = []
     levelData = json.load(open('levelData.json'))
     for i in levelData[Map]["environment_objects"]:
-        gameObjects.append(platforms(i["rect"]))
+        game_objects.append(platforms(i["rect"]))
     for i in levelData[Map]["enemy_players"]:
         buffer_character = PhysicsCharacter(
             pWeapon = Weapon(
@@ -20,8 +20,8 @@ def ReadMap(Map):
             )
         )
         buffer_character.team = 2
-        gameObjects.append(buffer_character)
-    return gameObjects
+        game_objects.append(buffer_character)
+    return game_objects
 
 def ReadSave():
     squad = []
