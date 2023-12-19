@@ -8,7 +8,7 @@ def ReadMap(Map):
     for i in levelData[Map]["environment_objects"]:
         game_objects.append(platforms(i["rect"]))
     for i in levelData[Map]["enemy_players"]:
-        buffer_character = PhysicsCharacter(
+        buffer_character = player_character(
             pWeapon = Weapon(
                 isAuto      = i["weapon"]["isAuto"],
                 fireRate    = i["weapon"]["fireRate"],
@@ -27,7 +27,7 @@ def ReadSave():
     squad = []
     saveData = json.load(open('saveData.json'))
     for i,object in enumerate(saveData["squad"]):
-        buffer_character = PhysicsCharacter(
+        buffer_character = player_character(
             pWeapon = Weapon(
                 isAuto      = saveData["squad"][i]["weapon"]["isAuto"],
                 fireRate    = saveData["squad"][i]["weapon"]["fireRate"],

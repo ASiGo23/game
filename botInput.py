@@ -4,8 +4,8 @@ from pygame.locals import *
 import random
 
 def botInput(game_instance):
-    from GameObj import PhysicsCharacter
-    for bot in game_instance.get_type(PhysicsCharacter):
+    from GameObj import player_character
+    for bot in game_instance.get_type(player_character):
         if bot.bot.active == True:
             bot.bot.calculate_moves()
 
@@ -15,9 +15,9 @@ class bot:
         self.avatar = avatar
         self.active = True
     def calculate_moves(self):
-        from GameObj import PhysicsCharacter,platforms
+        from GameObj import player_character,platforms
         self.avatar.moveOnX(2)
-        playerlist = self.game_instance.get_type(PhysicsCharacter)
+        playerlist = self.game_instance.get_type(player_character)
         for player in playerlist:
             if player.team == self.avatar.team:
                 playerlist.remove(player)

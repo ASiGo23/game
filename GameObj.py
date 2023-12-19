@@ -6,10 +6,9 @@ from Weapon import *
 from Bullet import *
 from botInput import *
 
-global playerNum
-playerNum = 0
+global playerNum; playerNum = 0
 
-class PhysicsCharacter(GravObj, Drawable, CollisionObj):
+class player_character(GravObj, Drawable, CollisionObj):
     def __init__(self, pWeapon, maxHealth = 100, team = 0) -> None:
         super().__init__()
         self.game_instance = None
@@ -79,7 +78,7 @@ class PhysicsCharacter(GravObj, Drawable, CollisionObj):
         pass
 
 class dead_character():
-    def __init__(self, character:PhysicsCharacter, game_instance) -> None:
+    def __init__(self, character:player_character, game_instance) -> None:
         self.game_instance = game_instance
         self.respawnDelay = 1*60
         self.ghost = character
@@ -88,8 +87,9 @@ class dead_character():
         self.respawnDelay += -1
         if self.respawnDelay <=0:
             self.ghost.hitbox.topleft = (50,50)
-            self.game_instance.get_game_objects().append(self.ghost)
-            self.game_instance.get_game_objects().remove(self)
+            request = self.game_instance.get_game_objects
+            request().append(self.ghost)
+            request().remove(self)
 
 
 class platforms(Drawable, CollisionObj):

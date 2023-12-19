@@ -9,6 +9,7 @@ from ops import *
 from ReadData import *
 from UserInput import *
 from botInput import *
+from Physics import *
 
 def tickUpdate(game_instance):
     for object in game_instance.get_game_objects():
@@ -16,32 +17,12 @@ def tickUpdate(game_instance):
         except: pass
 
 def physics(game_instance):
-    main = game_instance
-    environmentObjects = main.get_type(platforms)
-    for player in main.get_type(PhysicsCharacter):
-        #move the player according to the velocity incrementally
-        for step in range(abs(player.yVelocity)):
-            player.updateCoord(0,sign(player.yVelocity))
-            for rect in environmentObjects:
-                collidetop    = rect.hitbox.collidepoint(player.hitbox.midtop)
-                collidebottom = rect.hitbox.collidepoint(player.hitbox.midbottom)
-                if collidetop or collidebottom:
-                    player.yVelocity = 0
-                    player.updateCoord(0,-1 * sign(player.yVelocity))
-                    break
-        #check to see if player is on the ground
-        #if not increase yVelocity and prevent from crouching
-        onGround = False
-        for platform in environmentObjects:
-            collidebottom = platform.hitbox.collidepoint(player.hitbox.midbottom)
-            if collidebottom:
-                onGround = True
-        if not onGround:
-            player.yVelocity += 1
+    for player in game_instance.get_type(player_character):
+        apply_gravity(game_instance,player)
 
 def characterActions(game_instance):
     main = game_instance
-    for character in main.get_type(PhysicsCharacter):
+    for character in main.get_type(player_character):
         if character.isFiring == True:
             character.fire()
             if character.pWeapon.isAuto == False:
@@ -92,12 +73,11 @@ class main():
         pygame.display.flip()
 
     @singledispatchmethod
-    def add_subject(self, subject:PhysicsCharacter):
+    def add_subject(self, subject:player_character):
         self.character_list.append(subject)
         self.game_objects.append(subject)
         subject.game_instance = self
         subject.bot.game_instance = self
-        
 
     @add_subject.register
     def _(self, subject:platforms):
@@ -127,7 +107,7 @@ class main():
         return self.background
     def get_player(self):
         return self.player
-    def update_player(self, new_player:PhysicsCharacter):
+    def update_player(self, new_player:player_character):
         self.player.bot.active = True
         self.player = new_player
         self.player.bot.active = False
@@ -140,3 +120,6 @@ class main():
         return buffer
     def get_game_objects(self):
         return self.game_objects
+    def get_collidable(self,subject:type):
+        if subject == player_character:
+            return self.get_type(platforms)

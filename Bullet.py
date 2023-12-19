@@ -20,7 +20,7 @@ class Bullet(Drawable, PhysicsObj):
         self.game_instance.get_game_objects().remove(self)
 
     def update_pos(self):
-        from GameObj import platforms,PhysicsCharacter
+        from GameObj import platforms,player_character
         despawn = False
         xVelocity = math.cos(self.angle)
         yVelocity = math.sin(self.angle)
@@ -33,7 +33,7 @@ class Bullet(Drawable, PhysicsObj):
                     self.endcoord = (self.x, self.y)
                     rect.deal_damage(50)
                     break
-            for player in self.game_instance.get_type(PhysicsCharacter):
+            for player in self.game_instance.get_type(player_character):
                 is_self = player == self.owner
                 is_team = player.team == self.owner.team
                 if ((not is_self) and (not is_team)):
