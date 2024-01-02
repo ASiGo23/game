@@ -23,10 +23,10 @@ while True:
             sys.exit()
         from Main import main
         game = main(screen)
-
-        for object in ReadMap("Demo"):
-            game.add_subject(object)
+        
         for object in ReadSave():
+            game.add_subject(object)
+        for object in ReadMap("Demo"):
             game.add_subject(object)
 
         game.player_set(0)

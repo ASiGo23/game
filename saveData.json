@@ -5,8 +5,10 @@
 
             "weapon":{
                 "isAuto"  : true,
-                "fireRate" : 2,
+                "fireRate" : 5,
                 "damage" : 5,
+                "shots" : 1,
+                "acc" : 10,
                 "speed" : 0,
                 "size" : 0,
                 "range" : 500,
@@ -20,6 +22,8 @@
                 "isAuto"  : true,
                 "fireRate" : 20,
                 "damage" : 5,
+                "shots" : 1,
+                "acc" : 5,
                 "speed" : 0,
                 "size" : 0,
                 "range" : 500,

@@ -4,7 +4,12 @@ from Abstract import *
 from GameObj import PhysicsObj,GravObj
 
 class Bullet(Drawable, PhysicsObj):
-    def __init__(self, game_instance, owner, angle, range,spaawncoords: tuple[int,int]):
+    def __init__(self, 
+                 game_instance, 
+                 owner, 
+                 angle, 
+                 range,
+                 spaawncoords: tuple[int,int]):
         self.game_instance = game_instance
         self.owner = owner
         self.range = range
