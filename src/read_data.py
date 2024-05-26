@@ -1,6 +1,6 @@
 import json
-from GameObj import *
-from Weapon import *
+from game_obj import *
+from wepaon import *
 
 def ReadMap(Map):
     game_objects = []

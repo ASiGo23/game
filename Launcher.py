@@ -1,7 +1,7 @@
 import sys
 import pygame
 from pygame.locals import *
-from ReadData import *
+from read_data import *
 
 gameName = 'Untitled Game'
 

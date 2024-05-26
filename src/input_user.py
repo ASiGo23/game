@@ -3,10 +3,10 @@ import pygame
 from pygame.locals import *
 import pygame.key as key
 
-from GameObj import *
+from game_obj import *
 
 def userInput(game_instance):
-    from GameObj import platforms
+    from game_obj import platforms
     main = game_instance
     player = main.get_player()
     environmentObjects = main.get_type(platforms)

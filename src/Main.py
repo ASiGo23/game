@@ -4,12 +4,12 @@ from functools import singledispatchmethod
 import pygame
 from pygame import key,mouse,event
 from pygame.locals import *
-from GameObj import *
+from game_obj import *
 from ops import *
-from ReadData import *
-from UserInput import *
-from botInput import *
-from Physics import *
+from read_data import *
+from input_user import *
+from input_bot import *
+from physics import *
 
 def tickUpdate(game_instance):
     for object in game_instance.get_game_objects():

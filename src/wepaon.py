@@ -1,7 +1,7 @@
 import math
 import random
 import pygame
-from Bullet import *
+from bullet import *
 
 class Weapon:
     def __init__(self,

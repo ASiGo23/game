@@ -1,7 +1,7 @@
 import math
 import pygame
-from Abstract import *
-from GameObj import PhysicsObj,GravObj
+from abstract import *
+from game_obj import PhysicsObj,GravObj
 
 class Bullet(Drawable, PhysicsObj):
     def __init__(self, 
@@ -25,7 +25,7 @@ class Bullet(Drawable, PhysicsObj):
         self.game_instance.get_game_objects().remove(self)
 
     def update_pos(self):
-        from GameObj import platforms,player_character
+        from game_obj import platforms,player_character
         despawn = False
         xVelocity = math.cos(self.angle)
         yVelocity = math.sin(self.angle)

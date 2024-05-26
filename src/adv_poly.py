@@ -18,7 +18,7 @@ class adv_polygon:
             if isinstance(index, vertex):
                 temp.append(index); continue
             try: temp.append(vertex(index))
-            except: raise AttributeError("Unrecognized Type in list vertices")
+            except: raise AttributeError("Unrecognized type in list vertices")
         vertices = temp
 
         index = 0
@@ -63,29 +63,13 @@ class adv_polygon:
 
         return norms
     
-    def collide_poly(self, polygon: Self):
+    def reduced_normal_list(self, other: Self) -> list:
         self_vertices = self.vertex_list()
-        other_vertices = polygon.vertex_list()
+        other_vertices = other.vertex_list()
         normals = []
         
-        def dot_list(normals, vertices):
-            for normal in normals:
-                print(f"normals: {normal}")
-                min = None
-                max = None
-                for vertex in vertices:
-                    print(f"vertex: {vertex}")
-                    product = numpy.dot(normal, vertex)
-                    if min == None:
-                        min = product
-                        max = product
-                    if product < min:
-                        min = product
-                    if product > max:
-                        max = product
-                print(f"min: {min}, max: {max}")
-
-        for norm in self.normal_list() + polygon.normal_list():
+        # Removes duplicate normals
+        for norm in self.normal_list() + other.normal_list():
             if norm[0] < 0: 
                 norm = numpy.multiply(norm, -1)
             if norm[0] == 0 and norm[1] < 0:
@@ -97,8 +81,48 @@ class adv_polygon:
                     break
             if flag == False: normals.append(norm)
 
-        dot_list(normals, self_vertices)
-        dot_list(normals, other_vertices)
+        return normals
+
+    def virtual_tick(self, tick: float) -> numpy.array:
+        temp = []
+        new_x = self.start_vertex.x + tick * self.velocity[0]
+        new_y = self.start_vertex.y + tick * self.velocity[1]
+        temp.append(numpy.array([new_x, new_y]))
+        vert = self.start_vertex.next
+        while vert != self.start_vertex:
+            new_x = vert.x + tick * self.velocity[0]
+            new_y = vert.y + tick * self.velocity[1]
+
+            temp.append(numpy.array([new_x, new_y]))
+            vert = vert.next
+        return numpy.array(temp)
+
+    def collide_poly(self, other: Self):
+        
+        def dot_list(normals, vertices):
+            extremes = []
+            for normal in normals:
+                #print(f"normals: {normal}")
+                min = None
+                max = None
+                for vertex in vertices:
+                    #print(f"vertex: {vertex}")
+                    product = numpy.dot(normal, vertex)
+                    if min == None:
+                        min = product
+                        max = product
+                    if product < min:
+                        min = product
+                    if product > max:
+                        max = product
+                extremes.append((min,max))
+                #print(f"min: {min}, max: {max}")
+            return extremes
+
+        normals = self.reduced_normal_list(other)
+
+        self_extremes = dot_list(normals, self.vertex_list())
+        other_extreems = dot_list(normals, other.vertex_list())
 
 
 
@@ -110,8 +134,7 @@ class adv_rect(adv_polygon):
                  velocity: tuple[float,float] = [0,0]
                  ):
         # Origin point is meant to be the point that is the most "negative"
-        # Left ambiguous as different people have different interpretations as
-        # to which direction is positive. 
+        # according to the coordinates
         
         a = vertex(origin_point)
         b = vertex(((a.x), (a.y + height)))

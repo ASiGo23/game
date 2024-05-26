@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
-from Abstract import *
-from Weapon import *
-from Bullet import *
-from botInput import *
+from abstract import *
+from wepaon import *
+from bullet import *
+from input_bot import *
 
 global playerNum; playerNum = 0
 
