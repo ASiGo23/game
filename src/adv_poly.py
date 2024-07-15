@@ -1,6 +1,7 @@
+import ops
 import time
 import numpy
-from typing import Self
+from typing_extensions import Self
 
 class vertex:
     def __init__(self, coords: tuple[float, float]):
@@ -34,7 +35,7 @@ class adv_polygon:
 
         self.velocity = list(velocity)
 
-    def vertex_list(self) -> numpy.array:
+    def vertices_list(self) -> numpy.array:
         temp = []
         temp.append(numpy.array([self.start_vertex.x, self.start_vertex.y]))
         vert = self.start_vertex.next
@@ -64,8 +65,6 @@ class adv_polygon:
         return norms
     
     def reduced_normal_list(self, other: Self) -> list:
-        self_vertices = self.vertex_list()
-        other_vertices = other.vertex_list()
         normals = []
         
         # Removes duplicate normals
@@ -83,7 +82,7 @@ class adv_polygon:
 
         return normals
 
-    def virtual_tick(self, tick: float) -> numpy.array:
+    def ticked_vertices(self, tick: float) -> numpy.array:
         temp = []
         new_x = self.start_vertex.x + tick * self.velocity[0]
         new_y = self.start_vertex.y + tick * self.velocity[1]
@@ -100,6 +99,8 @@ class adv_polygon:
     def collide_poly(self, other: Self):
         
         def dot_list(normals, vertices):
+            #Returns a list of tuples that represent extremes for each normal
+
             extremes = []
             for normal in normals:
                 #print(f"normals: {normal}")
@@ -119,11 +120,93 @@ class adv_polygon:
                 #print(f"min: {min}, max: {max}")
             return extremes
 
+        def between(a,b,c) -> bool:
+            #a is tested
+            #b and c are the bounds
+
+            if (c<=b):
+                raise ArithmeticError("c is less than b")
+            if (a>b and c<a) or (a<b and c>a):
+                return False
+            if (b<a and a<c):
+                return True
+
+        #Generates a list of the normals from both polygons
         normals = self.reduced_normal_list(other)
 
-        self_extremes = dot_list(normals, self.vertex_list())
-        other_extreems = dot_list(normals, other.vertex_list())
+        #Gets the extremes for each polygon at the start
+        self_extremes = dot_list(normals, self.vertices_list())
+        other_extremes = dot_list(normals, other.vertices_list())
 
+        #Gets the extremes for each polygon at the end
+        tick_self_extremes = dot_list(normals, self.ticked_vertices(1/60))
+        tick_other_extremes = dot_list(normals, other.ticked_vertices(1/60))
+
+        for x in range(len(normals)):
+            #Checks if objects already collided
+            self_1 = self_extremes[x]
+            other_1= other_extremes[x]
+
+            if  not(
+                between(other_1[0], self_1[0], self_1[1])
+                or
+                between(other_1[1], self_1[0], self_1[1])
+                or 
+                between(self_1[0], other_1[0], other_1[1])
+                or
+                between(self_1[1], other_1[0], other_1[1])
+                ): 
+                break
+        else: return -2
+
+        #Checks if object will collide within the tick
+        time = 1
+
+        for x in range(len(normals)):
+            #Creates tuples of individual extremes for each normal
+            #Represented as a tuple (min,max)
+            self_1 = self_extremes[x]
+            self_2 = tick_self_extremes[x]
+            other_1= other_extremes[x]
+            other_2 = tick_other_extremes[x]
+
+            if not (# Checks if the object will ever collide
+                between(other_2[0], self_2[0], self_2[1])
+                or
+                between(other_2[1], self_2[0], self_2[1])
+            ): return -1
+
+            # Intersection code from https://stackoverflow.com/a/51127674
+            # Adapted for use
+            def findIntersection(linesegment_1, linesegment_2):
+                x1, y1, x2, y2 = linesegment_1
+                x3, y3, x4, y4 = linesegment_2
+                try:
+                    px= ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ) 
+                    return (px)
+                except: return -1
+
+            other_segment_1 = ((0,other_1[0]),(1,other_2[0]))
+            other_segment_2 = ((0,self_1[0]),(1,self_2[0]))
+
+            for segment in ((0,self_1[0]),(1,self_2[0])), ((0,self_1[0]),(1,self_2[0])):
+                x = findIntersection(segment, other_segment_1)
+                if (
+                    x >= 0
+                    and
+                    x < 1
+                ):
+                    time = x
+                x = findIntersection(segment, other_segment_2)
+                if (
+                    x >= 0
+                    and
+                    x < 1
+                ):
+                    time = x
+
+        return time
+                    
 
 
 class adv_rect(adv_polygon):
@@ -144,9 +227,9 @@ class adv_rect(adv_polygon):
 
 
 start = time.time()
-rect1 = adv_rect((0,0),1,1)
+rect1 = adv_rect((1,1),1,1)
 rect2 = adv_rect((0,0),1,1)
-rect1.collide_poly(rect2)
+print(rect1.collide_poly(rect2))
 end = time.time()
 print(f"{end-start}")
 #best:0.0003 seconds without printing
