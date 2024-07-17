@@ -1,4 +1,3 @@
-import ops
 import time
 import numpy
 from typing_extensions import Self
@@ -131,6 +130,8 @@ class adv_polygon:
             if (b<a and a<c):
                 return True
 
+        global tick
+
         #Generates a list of the normals from both polygons
         normals = self.reduced_normal_list(other)
 
@@ -139,8 +140,8 @@ class adv_polygon:
         other_extremes = dot_list(normals, other.vertices_list())
 
         #Gets the extremes for each polygon at the end
-        tick_self_extremes = dot_list(normals, self.ticked_vertices(1/60))
-        tick_other_extremes = dot_list(normals, other.ticked_vertices(1/60))
+        tick_self_extremes = dot_list(normals, self.ticked_vertices(tick))
+        tick_other_extremes = dot_list(normals, other.ticked_vertices(tick))
 
         for x in range(len(normals)):
             #Checks if objects already collided
@@ -160,7 +161,8 @@ class adv_polygon:
         else: return -2
 
         #Checks if object will collide within the tick
-        time = 1
+        time = 1/tick
+        x_count = 0
 
         for x in range(len(normals)):
             #Creates tuples of individual extremes for each normal
@@ -170,42 +172,53 @@ class adv_polygon:
             other_1= other_extremes[x]
             other_2 = tick_other_extremes[x]
 
-            if not (# Checks if the object will ever collide
-                between(other_2[0], self_2[0], self_2[1])
-                or
-                between(other_2[1], self_2[0], self_2[1])
-            ): return -1
-
             # Intersection code from https://stackoverflow.com/a/51127674
             # Adapted for use
             def findIntersection(linesegment_1, linesegment_2):
-                x1, y1, x2, y2 = linesegment_1
-                x3, y3, x4, y4 = linesegment_2
-                try:
-                    px= ( (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4) ) / ( (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4) ) 
+                (x1, y1), (x2, y2) = linesegment_1
+                (x3, y3), (x4, y4) = linesegment_2
+
+                top = (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4)
+                bottom = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)
+                if bottom != 0:
+                    px= top/bottom
                     return (px)
-                except: return -1
+                else: 
+                    return -1
 
             other_segment_1 = ((0,other_1[0]),(1,other_2[0]))
             other_segment_2 = ((0,self_1[0]),(1,self_2[0]))
 
+            local_x = 0
+
             for segment in ((0,self_1[0]),(1,self_2[0])), ((0,self_1[0]),(1,self_2[0])):
                 x = findIntersection(segment, other_segment_1)
+                if(x >= 0):
+                    local_x += 1
                 if (
                     x >= 0
                     and
-                    x < 1
+                    x < time
                 ):
-                    time = x
-                x = findIntersection(segment, other_segment_2)
-                if (
-                    x >= 0
-                    and
-                    x < 1
-                ):
+                    x_count += 1
                     time = x
 
-        return time
+                x = findIntersection(segment, other_segment_2)
+                if(x >= 0):
+                    local_x += 1
+                if (
+                    x >= 0
+                    and
+                    x < time
+                ):
+                    x_count +=1
+                    time = x
+
+            if local_x == 0:
+                return -1
+        if x_count != 0:
+            return time/(1/tick)
+        else: return -1
                     
 
 
@@ -226,10 +239,12 @@ class adv_rect(adv_polygon):
         super().__init__([a, b, c, d], velocity)
 
 
-start = time.time()
-rect1 = adv_rect((1,1),1,1)
+global tick
+tick = 1/60
+rect1 = adv_rect((10,10),1,1,(-11,-11))
 rect2 = adv_rect((0,0),1,1)
-print(rect1.collide_poly(rect2))
+start = time.time()
+prediction = rect1.collide_poly(rect2)
 end = time.time()
+print(prediction)
 print(f"{end-start}")
-#best:0.0003 seconds without printing
