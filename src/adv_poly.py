@@ -10,7 +10,7 @@ class vertex:
 class adv_polygon:
     def __init__(self, vertices:list, velocity: tuple[float,float]):
         # Error management
-        if len(vertices) == [0,1,2]:
+        if len(vertices) < 3:
             raise AttributeError("Not enough vertices to make a polygon")
         
         temp = []
@@ -158,7 +158,7 @@ class adv_polygon:
                 between(self_1[1], other_1[0], other_1[1])
                 ): 
                 break
-        else: return -2
+        else: return -2, None
 
         #Checks if object will collide within the tick
         time = 1/tick
@@ -182,7 +182,7 @@ class adv_polygon:
                 bottom = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)
                 if bottom != 0:
                     px= top/bottom
-                    return (px)
+                    return px
                 else: 
                     return -1
 
@@ -191,34 +191,45 @@ class adv_polygon:
 
             local_x = 0
 
-            for segment in ((0,self_1[0]),(1,self_2[0])), ((0,self_1[0]),(1,self_2[0])):
-                x = findIntersection(segment, other_segment_1)
-                if(x >= 0):
+            for segment in (
+                    (
+                    (0,self_1[0]),
+                    (1,self_2[0])
+                    ), 
+                    (
+                    (0,self_1[0]),
+                    (1,self_2[0])
+                    )
+                    ):
+                inter = findIntersection(segment, other_segment_1)
+                if(inter >= 0):
                     local_x += 1
                 if (
-                    x >= 0
+                    inter > 0
                     and
-                    x < time
+                    inter < time
                 ):
                     x_count += 1
-                    time = x
+                    time = inter
+                    normal = normals[x]
 
-                x = findIntersection(segment, other_segment_2)
-                if(x >= 0):
+                inter = findIntersection(segment, other_segment_2)
+                if(inter >= 0):
                     local_x += 1
                 if (
-                    x >= 0
+                    inter > 0
                     and
-                    x < time
+                    inter < time
                 ):
                     x_count +=1
-                    time = x
-
+                    time = inter
+                    normal = normals[x]
+                
             if local_x == 0:
-                return -1
+                return -1, None
         if x_count != 0:
-            return time/(1/tick)
-        else: return -1
+            return time/(1/tick), normal
+        else: return -1, None
                     
 
 
@@ -238,13 +249,13 @@ class adv_rect(adv_polygon):
         d = vertex(((a.x + width), (a.y)))
         super().__init__([a, b, c, d], velocity)
 
-
-global tick
-tick = 1/60
-rect1 = adv_rect((10,10),1,1,(-11,-11))
-rect2 = adv_rect((0,0),1,1)
-start = time.time()
-prediction = rect1.collide_poly(rect2)
-end = time.time()
-print(prediction)
-print(f"{end-start}")
+if __name__ == "__main__":
+    global tick
+    tick = 1/60
+    rect1 = adv_rect((10,0),1,1,(-11,0))
+    rect2 = adv_rect((0,0),1,1)
+    start = time.time()
+    prediction, normal = rect1.collide_poly(rect2)
+    end = time.time()
+    print(prediction, normal)
+    print(f"{end-start}")
