@@ -175,15 +175,20 @@ class adv_polygon:
             # Intersection code from https://stackoverflow.com/a/51127674
             # Adapted for use
             def findIntersection(linesegment_1, linesegment_2):
+
                 (x1, y1), (x2, y2) = linesegment_1
                 (x3, y3), (x4, y4) = linesegment_2
 
                 top = (x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4)
                 bottom = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)
+
                 if bottom != 0:
                     px= top/bottom
+                    print(f"px:{px}")
                     return px
                 else: 
+                    if (y2-y1)/(x2-x1) == (y4-y3)/(x4-x3):
+                        return 0
                     return -1
 
             other_segment_1 = ((0,other_1[0]),(1,other_2[0]))
@@ -224,8 +229,11 @@ class adv_polygon:
                     x_count +=1
                     time = inter
                     normal = normals[x]
-                
+            
+            print(f"local_x: {local_x}")
+            print(f"x_count: {x_count}")
             if local_x == 0:
+                print("no extremes intersect")
                 return -1, None
         if x_count != 0:
             return time/(1/tick), normal
@@ -252,7 +260,7 @@ class adv_rect(adv_polygon):
 if __name__ == "__main__":
     global tick
     tick = 1/60
-    rect1 = adv_rect((10,0),1,1,(-11,0))
+    rect1 = adv_rect((0,10),1,1,(0,-11))
     rect2 = adv_rect((0,0),1,1)
     start = time.time()
     prediction, normal = rect1.collide_poly(rect2)
